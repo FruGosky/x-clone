@@ -1,6 +1,6 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import LoadingIcon from "~/components/LoadingIcon";
+import { LoadingPage } from "~/components/LoadingIcon";
 import Post from "~/components/Post";
 import PostWizard from "~/components/PostWizard";
 import { api } from "~/utils/api";
@@ -16,13 +16,7 @@ export default function Home() {
 
 	if (isPostsError) return <p>{`Error: ${postsError.message}`}</p>;
 
-	if (isPostsLoading) {
-		return (
-			<div className="flex h-screen items-center justify-center">
-				<LoadingIcon />
-			</div>
-		);
-	}
+	if (isPostsLoading) return <LoadingPage />;
 
 	return (
 		<>
@@ -41,7 +35,7 @@ export default function Home() {
 						)}
 					</header>
 					<div className="flex flex-col">
-						{posts.map((fullPost) => (
+						{posts?.map((fullPost) => (
 							<Post {...fullPost} key={fullPost.post.id} />
 						))}
 					</div>

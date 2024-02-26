@@ -21,3 +21,11 @@ export default function LoadingIcon() {
 		</div>
 	);
 }
+
+export function LoadingPage() {
+	return (
+		<div className="flex h-screen items-center justify-center">
+			<LoadingIcon />
+		</div>
+	);
+}
