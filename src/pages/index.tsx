@@ -42,11 +42,7 @@ export default function Home() {
 			<main className="flex h-screen justify-center">
 				<div className="h-full w-full border-x border-slate-400 md:max-w-2xl">
 					<header className="flex items-center justify-between gap-4 border-b border-slate-400 p-4">
-						{isUserSignedIn ? (
-							<PostWizard user={user} />
-						) : (
-							<SignInButton />
-						)}
+						{isUserSignedIn ? <PostWizard /> : <SignInButton />}
 					</header>
 					<PostList />
 				</div>

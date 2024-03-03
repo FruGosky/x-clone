@@ -1,14 +1,11 @@
 import { UserButton } from "@clerk/nextjs";
-import type { UserResource } from "@clerk/types";
-import { useState } from "react";
+import { type KeyboardEvent, useState } from "react";
 import { api } from "~/utils/api";
 import { Button } from "./ui/Button";
+import toast from "react-hot-toast";
+import LoadingIcon from "./LoadingIcon";
 
-type TPostWizardProps = {
-	user: UserResource;
-};
-
-export default function PostWizard(props: TPostWizardProps) {
+export default function PostWizard() {
 	const [message, setMessage] = useState("");
 
 	const ctx = api.useUtils();
@@ -17,8 +14,22 @@ export default function PostWizard(props: TPostWizardProps) {
 		onSuccess: () => {
 			setMessage("");
 			void ctx.posts.getAll.invalidate();
+			toast.success("Posted!");
+		},
+		onError: (error) => {
+			const zodErrorMessages =
+				error.data?.zodError?.fieldErrors?.content?.[0] ??
+				"Failed to post!, Please try again later.";
+
+			toast.error(zodErrorMessages);
 		},
 	});
+
+	const handleButtonOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key !== "Enter" || message === "") return;
+		e.preventDefault();
+		mutate({ content: message });
+	};
 
 	return (
 		<>
@@ -29,15 +40,20 @@ export default function PostWizard(props: TPostWizardProps) {
 				placeholder="What is happening?!"
 				value={message}
 				onChange={(e) => setMessage(e.target.value)}
+				onKeyDown={handleButtonOnKeyDown}
 				disabled={isPosting}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={() => mutate({ content: message })}
-				disabled={isPosting}
-			>
-				Post
-			</Button>
+			{!isPosting ? (
+				<Button
+					variant={"secondary"}
+					onClick={() => mutate({ content: message })}
+					disabled={isPosting || message.length === 0}
+				>
+					Post
+				</Button>
+			) : (
+				<LoadingIcon />
+			)}
 		</>
 	);
 }
