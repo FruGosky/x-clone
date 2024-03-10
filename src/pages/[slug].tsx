@@ -1,5 +1,8 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
+import UserProfileHeader from "~/components/UserProfileHeader";
+import ProfilePostList from "~/components/ProfilePostList";
+import PageLayout from "~/components/PageLayout";
 
 type TProfilePageProps = {
 	username: string;
@@ -30,21 +33,11 @@ export default function ProfilePage(props: TProfilePageProps) {
 	);
 }
 
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "~/server/api/root";
-import { db } from "~/server/db";
-import SuperJSON from "superjson";
 import { type GetStaticProps } from "next";
-import PageLayout from "~/components/PageLayout";
-import UserProfileHeader from "~/components/UserProfileHeader";
-import ProfilePostList from "~/components/ProfilePostList";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-	const ssg = createServerSideHelpers({
-		router: appRouter,
-		ctx: { db, userId: null },
-		transformer: SuperJSON,
-	});
+	const ssg = generateSSGHelper();
 
 	const slug = context.params?.slug;
 
