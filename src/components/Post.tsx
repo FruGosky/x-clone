@@ -10,30 +10,32 @@ export default function Post(props: TPostProps) {
 	dayjs.extend(relativeTime);
 
 	return (
-		<Link href={`/post/${props.post.id}`}>
-			<article className="flex gap-3 border-b border-slate-400 p-8">
-				<Link href={`/@${props.author.username}`}>
-					<Image
-						src={props.author.imageUrl}
-						alt="Author profile image"
-						height={50}
-						width={50}
-						className="rounded-full"
-					/>
-				</Link>
-				<div className="flex flex-col">
-					<div className="flex gap-1 text-slate-400">
-						<Link href={`/@${props.author.username}`}>
-							<span>{`@${props.author.username}`}</span>
-						</Link>
+		<article className="flex gap-3 border-b border-slate-400 p-8">
+			<Link href={`/@${props.author.username}`}>
+				<Image
+					src={props.author.imageUrl}
+					alt="Author profile image"
+					height={50}
+					width={50}
+					className="rounded-full"
+				/>
+			</Link>
+			<div className="flex flex-col">
+				<div className="flex gap-1 text-slate-400">
+					<Link href={`/@${props.author.username}`}>
+						<span>{`@${props.author.username}`}</span>
+					</Link>
+					<Link href={`/post/${props.post.id}`}>
 						<div className="flex gap-1">
 							<span>·</span>
 							<span>{dayjs(props.post.createdAt).fromNow()}</span>
 						</div>
-					</div>
-					<p>{props.post.content}</p>
+					</Link>
 				</div>
-			</article>
-		</Link>
+				<Link href={`/post/${props.post.id}`}>
+					<p>{props.post.content}</p>
+				</Link>
+			</div>
+		</article>
 	);
 }
