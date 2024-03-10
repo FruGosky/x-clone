@@ -1,30 +1,7 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import { LoadingPage } from "~/components/LoadingIcon";
-import Post from "~/components/Post";
+import PostList from "~/components/PostList";
 import PostWizard from "~/components/PostWizard";
-import { api } from "~/utils/api";
-
-const PostList = () => {
-	const {
-		data: posts,
-		isLoading: isPostsLoading,
-		isError: isPostsError,
-		error: postsError,
-	} = api.posts.getAll.useQuery();
-
-	if (isPostsError) return <p>{`Error: ${postsError.message}`}</p>;
-
-	if (isPostsLoading) return <LoadingPage />;
-
-	return (
-		<div className="flex flex-col">
-			{posts?.map((fullPost) => (
-				<Post {...fullPost} key={fullPost.post.id} />
-			))}
-		</div>
-	);
-};
 
 export default function Home() {
 	const { user, isSignedIn: isUserSignedIn } = useUser();
