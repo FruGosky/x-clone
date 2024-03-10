@@ -1,16 +1,64 @@
 import Head from "next/head";
+import { api } from "~/utils/api";
 
-export default function ProfilePage() {
+type TProfilePageProps = {
+	username: string;
+};
+
+export default function ProfilePage(props: TProfilePageProps) {
+	const { data } = api.profile.getUserByUsername.useQuery({
+		username: props.username,
+	});
+
+	if (!data) return <div>404</div>;
+
 	return (
 		<>
 			<Head>
-				<title>Profile</title>
+				<title>{`X-Clone | @${data.username}`}</title>
 			</Head>
-			<main className="flex h-screen justify-center">
-				<div className="h-full w-full border-x border-slate-400 md:max-w-2xl">
-					Profile view
+			<PageLayout>
+				<UserProfileHeader userData={data} />
+				<div className="p-4 text-2xl font-bold">
+					{`@${data.username}`}
 				</div>
-			</main>
+				<div className="border-b border-slate-400"></div>
+			</PageLayout>
 		</>
 	);
 }
+
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "~/server/api/root";
+import { db } from "~/server/db";
+import SuperJSON from "superjson";
+import { type GetStaticProps } from "next";
+import PageLayout from "~/components/PageLayout";
+import UserProfileHeader from "~/components/UserProfileHeader";
+
+export const getStaticProps: GetStaticProps = async (context) => {
+	const ssg = createServerSideHelpers({
+		router: appRouter,
+		ctx: { db, userId: null },
+		transformer: SuperJSON,
+	});
+
+	const slug = context.params?.slug;
+
+	if (typeof slug !== "string") throw new Error("no slug");
+
+	const username = slug.replace("@", "");
+
+	await ssg.profile.getUserByUsername.prefetch({ username });
+
+	return {
+		props: {
+			trpcState: ssg.dehydrate(),
+			username,
+		},
+	};
+};
+
+export const getStaticPaths = async () => {
+	return { paths: [], fallback: "blocking" };
+};
