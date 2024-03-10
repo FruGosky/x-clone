@@ -22,7 +22,9 @@ export default function ProfilePage(props: TProfilePageProps) {
 				<div className="p-4 text-2xl font-bold">
 					{`@${data.username}`}
 				</div>
-				<div className="border-b border-slate-400"></div>
+				<div className="border-y border-slate-400">
+					<ProfilePostList userId={data.id} />
+				</div>
 			</PageLayout>
 		</>
 	);
@@ -35,6 +37,7 @@ import SuperJSON from "superjson";
 import { type GetStaticProps } from "next";
 import PageLayout from "~/components/PageLayout";
 import UserProfileHeader from "~/components/UserProfileHeader";
+import ProfilePostList from "~/components/ProfilePostList";
 
 export const getStaticProps: GetStaticProps = async (context) => {
 	const ssg = createServerSideHelpers({
